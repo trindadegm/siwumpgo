@@ -2,8 +2,8 @@ package main
 
 import (
   "fmt"
-  "github.com/trindadegm/wump/def"
-  "github.com/trindadegm/wump/ia"
+  "github.com/trindadegm/siwumpgo/def"
+  "github.com/trindadegm/siwumpgo/ia"
   "time"
 )
 
@@ -71,11 +71,11 @@ func main() {
   //                 "......."+
   //                 "......O"+
   //                 "....W.*", 7, 7)
-  //world.New(7, 7, 123451)
+  world.New(7, 7, 123451)
   //world.New(7, 7, 90908080)
   seed := time.Now().Unix()
   //world.New(14, 14, seed)
-  world.New(14, 14, 1540378218)
+  //world.New(14, 14, 1540378218)
   //world.New(14, 14, 1540341382)
 
   var sim def.Simulation
@@ -114,7 +114,7 @@ func main() {
 
     fmt.Println("SEED: ", seed)
     fmt.Println(sim, "\n", agent.GetSintesisInfo())
-    fmt.Print(agent)
+    fmt.Print(agent.String())
     fmt.Println(facing)
     fmt.Println("smell", "breeze", "shine", "shock", "scream")
     fmt.Println(perception)
@@ -137,7 +137,7 @@ func main() {
     fmt.Println(action)
     sim.Act(action)
 
-    time.Sleep(75 * time.Millisecond)
+    time.Sleep(50 * time.Millisecond)
   }
   labelEndFor:
 

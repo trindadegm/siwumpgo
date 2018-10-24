@@ -1,7 +1,7 @@
 package ia
 
 import (
-  "github.com/trindadegm/wump/def"
+  "github.com/trindadegm/siwumpgo/def"
   "container/list"
   //"fmt"
 )
@@ -47,6 +47,11 @@ func (model *Model) modelPerceptionsChanged(perceptions def.Perception) bool {
 }
 
 func (model *Model) noMoreWumpusOn(cave def.Point) {
+  model.World[cave.PosY][cave.PosX].HasWumpus = NO
+  if model.World[cave.PosY][cave.PosX].HasPit == NO {
+    model.World[cave.PosY][cave.PosX].IsSafe = YES
+  }
+
   adjs := getAdjacentPositions(cave)
   //fmt.Print(" NO MORE WUMPUS ON ", cave)
   for i := 0; i < 4; i++ {
@@ -55,6 +60,11 @@ func (model *Model) noMoreWumpusOn(cave def.Point) {
       elementToRemove := findPointOnList(pointer, cave)
       if (elementToRemove != nil) {
         pointer.Remove(elementToRemove)
+        //pointed := elementToRemove.Value.(def.Point)
+        //model.World[pointed.PosY][pointed.PosX].HasWumpus = NO
+        //if model.World[pointed.PosY][pointed.PosX].HasPit == NO {
+        //  model.World[pointed.PosY][pointed.PosX].IsSafe = YES
+        //}
         //removed := pointer.Remove(elementToRemove)
         //fmt.Print(" REMOVED ", removed.(def.Point))
       }
@@ -64,6 +74,11 @@ func (model *Model) noMoreWumpusOn(cave def.Point) {
 }
 
 func (model *Model) noMorePitOn(cave def.Point) {
+  model.World[cave.PosY][cave.PosX].HasPit = NO
+  if model.World[cave.PosY][cave.PosX].HasWumpus == NO {
+    model.World[cave.PosY][cave.PosX].IsSafe = YES
+  }
+
   adjs := getAdjacentPositions(cave)
   //fmt.Print(" NO MORE PIT ON ", cave)
   for i := 0; i < 4; i++ {
@@ -73,6 +88,11 @@ func (model *Model) noMorePitOn(cave def.Point) {
       elementToRemove := findPointOnList(pointer, cave)
       if (elementToRemove != nil) {
         pointer.Remove(elementToRemove)
+        //pointed := elementToRemove.Value.(def.Point)
+        //model.World[pointed.PosY][pointed.PosX].HasPit = NO
+        //if model.World[pointed.PosY][pointed.PosX].HasWumpus == NO {
+        //  model.World[pointed.PosY][pointed.PosX].IsSafe = YES
+        //}
         //removed := pointer.Remove(elementToRemove)
         //fmt.Print(" REMOVED ", removed.(def.Point))
       }
@@ -119,21 +139,21 @@ func getAdjacentPositions(point def.Point) [4]def.Point {
   return adjs;
 }
 
-func (model *Model) getBestBoundaryX() int {
-  if model.UpperBoundaryX != UNKNOWN {
-    return model.UpperBoundaryX
-  } else {
-    return model.ExploredBoundaryX
-  }
-}
-
-func (model *Model) getBestBoundaryY() int {
-  if model.UpperBoundaryY != UNKNOWN {
-    return model.UpperBoundaryY
-  } else {
-    return model.ExploredBoundaryY
-  }
-}
+//func (model *Model) getBestBoundaryX() int {
+//  if model.UpperBoundaryX != UNKNOWN {
+//    return model.UpperBoundaryX
+//  } else {
+//    return model.ExploredBoundaryX
+//  }
+//}
+//
+//func (model *Model) getBestBoundaryY() int {
+//  if model.UpperBoundaryY != UNKNOWN {
+//    return model.UpperBoundaryY
+//  } else {
+//    return model.ExploredBoundaryY
+//  }
+//}
 
 func (model *Model) removeWumpus() {
   if model.WumpusPos.PosX != -1 { // Knows where wumpus is
@@ -143,7 +163,7 @@ func (model *Model) removeWumpus() {
         model.World[adjs[i].PosY][adjs[i].PosX].WumpusPointer.Init()
       }
     }
-    model.World[model.WumpusPos.PosY][model.WumpusPos.PosX].HasWumpus = NO
+    model.noMoreWumpusOn(model.WumpusPos)
   }
 
   // Searches for pointers
@@ -152,8 +172,24 @@ func (model *Model) removeWumpus() {
     wplist := model.World[point.PosY][point.PosX].WumpusPointer
     for itwp := wplist.Front(); itwp != nil; itwp = itwp.Next() {
       pointed := itwp.Value.(def.Point)
-      model.World[pointed.PosY][pointed.PosX].HasWumpus = NO
+      model.noMoreWumpusOn(pointed)
     }
     wplist.Init()
+  }
+}
+
+func (model *Model) shockOnBoundaryY() {
+  model.ExploredBoundaryY--
+  for x := 0; x < model.ExploredBoundaryX; x++ {
+    model.noMoreWumpusOn(def.Point {x, model.ExploredBoundaryY})
+    model.noMorePitOn(def.Point {x, model.ExploredBoundaryY})
+  }
+}
+
+func (model *Model) shockOnBoundaryX() {
+  model.ExploredBoundaryX--
+  for y := 0; y < model.ExploredBoundaryY; y++ {
+    model.noMoreWumpusOn(def.Point {model.ExploredBoundaryX, y})
+    model.noMorePitOn(def.Point {model.ExploredBoundaryX, y})
   }
 }

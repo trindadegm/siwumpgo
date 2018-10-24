@@ -1,7 +1,7 @@
 package ia
 
 import (
-  "github.com/trindadegm/wump/def"
+  "github.com/trindadegm/siwumpgo/def"
   //"math"
   //"fmt"
   "container/list"

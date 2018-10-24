@@ -1,7 +1,7 @@
 package ia
 
 import (
-  "github.com/trindadegm/wump/def"
+  "github.com/trindadegm/siwumpgo/def"
   //"fmt"
   //"container/list"
 )
@@ -41,7 +41,7 @@ func (model *Model) deduceCaveModel(perception def.Perception) {
             }
             //fmt.Println(" -> ", list.Len())
           } else {
-            model.World[adjs[i].PosY][adjs[i].PosX].HasWumpus = NO
+            //model.World[adjs[i].PosY][adjs[i].PosX].HasWumpus = NO
             //fmt.Println("RPS", X, Y, adjs[i])
             model.noMoreWumpusOn(adjs[i])
           }
@@ -54,14 +54,14 @@ func (model *Model) deduceCaveModel(perception def.Perception) {
             }
             //fmt.Println(" -> ", list.Len())
           } else {
-            model.World[adjs[i].PosY][adjs[i].PosX].HasPit = NO
+            //model.World[adjs[i].PosY][adjs[i].PosX].HasPit = NO
             //fmt.Println("RPB", X, Y, adjs[i])
             model.noMorePitOn(adjs[i])
           }
 
-          if !perception.Smell && !perception.Breeze {
-            model.World[adjs[i].PosY][adjs[i].PosX].IsSafe = YES
-          }
+          //if !perception.Smell && !perception.Breeze {
+          //  model.World[adjs[i].PosY][adjs[i].PosX].IsSafe = YES
+          //}
         } else { // The adjacent cave was visited once
           list := model.World[adjs[i].PosY][adjs[i].PosX].WumpusPointer
           element := findPointOnList(list, model.HunterPos)
@@ -114,8 +114,9 @@ func (model *Model) deduceCaveModel(perception def.Perception) {
           wPointerList.Remove(itwp)
 
           // He is not guilty
-          model.World[pointed.PosY][pointed.PosX].HasWumpus = NO
-          model.World[pointed.PosY][pointed.PosX].IsSafe = YES
+          model.noMoreWumpusOn(pointed)
+          //model.World[pointed.PosY][pointed.PosX].HasWumpus = NO
+          //model.World[pointed.PosY][pointed.PosX].IsSafe = YES
 
           itwp = next
           continue

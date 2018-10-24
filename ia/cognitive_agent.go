@@ -1,7 +1,7 @@
 package ia
 
 import (
-  "github.com/trindadegm/wump/def"
+  "github.com/trindadegm/siwumpgo/def"
   "container/list"
   "fmt"
 )
@@ -95,9 +95,6 @@ func (agent *StupidCognitiveAgent) New() {
   agent.model.HasGold = false
   agent.model.HasKilled = false
 
-  agent.model.UpperBoundaryX = UNKNOWN
-  agent.model.UpperBoundaryY = UNKNOWN
-
   agent.model.ExploredBoundaryX = 2
   agent.model.ExploredBoundaryY = 2
 
@@ -137,18 +134,15 @@ func (agent *StupidCognitiveAgent) Decide(perception def.Perception, status def.
     return def.MOVE
   }
 
-  X := agent.model.HunterPos.PosX
-  Y := agent.model.HunterPos.PosY
-
   if perception.Shock && agent.moved {
     switch facing {
     case def.SOUTH:
-      agent.model.UpperBoundaryY = Y+1
-      agent.model.ExploredBoundaryY--
+      agent.model.shockOnBoundaryY()
+      //agent.model.ExploredBoundaryY--
       break
     case def.EAST:
-      agent.model.UpperBoundaryX = X+1
-      agent.model.ExploredBoundaryX--
+      agent.model.shockOnBoundaryX()
+      //agent.model.ExploredBoundaryX--
     }
   } else if agent.moved { // If moved and didn't hit
     agent.model.moveAgent() // Update model positions and things like that
@@ -231,7 +225,7 @@ func (agent StupidCognitiveAgent) String() string {
     }
     toReturn += "\n"
     for x := 0; x < lenX; x++ {
-      inPlaceChar := '.'
+      inPlaceChar := '?'
       if agent.model.HunterPos.PosX == x && agent.model.HunterPos.PosY == y {
         inPlaceChar = 'i'
       } else if world[y][x].HasWumpus == YES {
@@ -240,6 +234,8 @@ func (agent StupidCognitiveAgent) String() string {
         inPlaceChar = 'O'
       } else if world[y][x].Visited {
         inPlaceChar = '_'
+      } else if world[y][x].IsSafe == YES {
+        inPlaceChar = '+'
       }
       pitPtrRightChar := '.'
       if findPointOnList(world[y][x].PitPointer, def.Point {x+1, y}) != nil {

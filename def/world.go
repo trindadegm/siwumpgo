@@ -11,7 +11,7 @@ import (
 // pits cannot spawn (relative to letting a path to gold) and
 // the spawn of gold, hunter and wumpus will remove any pit
 // where they are spawned.
-const pitFactor = 10
+const pitFactor = 20
 
 // The bigger this is, the more likely is to gold to spawn
 // further away from the hunter
