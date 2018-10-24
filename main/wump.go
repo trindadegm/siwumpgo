@@ -71,37 +71,25 @@ func main() {
   //                 "......."+
   //                 "......O"+
   //                 "....W.*", 7, 7)
-  world.New(7, 7, 123451)
+  //world.New(7, 7, 123451)
   //world.New(7, 7, 90908080)
-  seed := time.Now().Unix()
   //world.New(14, 14, seed)
-  //world.New(14, 14, 1540378218)
+  //world.NewEx(14, 14, 1540378218, 10, 35)
   //world.New(14, 14, 1540341382)
+
+  var seed int64
+  var sizex, sizey, pf, uf int
+  fmt.Printf("WD: ")
+  fmt.Scanf("%d %d %d %d %d\n", &sizex, &sizey, &seed, &pf, &uf)
+  if seed == 0 {
+    seed = time.Now().Unix()
+  }
+  fmt.Printf("%d %d %d %d %d\n", sizex, sizey, seed, uf, pf)
+  world.NewEx(sizex, sizey, seed, pf, uf)
 
   var sim def.Simulation
 
   sim.FromWorld(world)
-
-  //for {
-  //  fmt.Println(sim)
-  //  fmt.Println("smell", "breeze", "shine", "shock", "scream")
-  //  fmt.Println(sim.Perceive())
-
-  //  var line, args string
-  //  fmt.Scanln(&line, &args)
-
-  //  switch line {
-  //  case "exit":
-  //    goto labelEndFor
-  //  case "move":
-  //    processMoveLine(&sim, args)
-  //  case "shoot":
-  //    processShootLine(&sim, args)
-  //  default:
-  //    fmt.Println("Unknown command")
-  //  }
-  //}
-  //labelEndFor:
 
   var agent ia.StupidCognitiveAgent
   agent.New()
@@ -114,7 +102,7 @@ func main() {
 
     fmt.Println("SEED: ", seed)
     fmt.Println(sim, "\n", agent.GetSintesisInfo())
-    fmt.Print(agent.String())
+    fmt.Print(agent)
     fmt.Println(facing)
     fmt.Println("smell", "breeze", "shine", "shock", "scream")
     fmt.Println(perception)

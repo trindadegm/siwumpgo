@@ -205,12 +205,17 @@ func (world *World) guaranteePoints(positionHunter Point, unluckyFactor int) (ma
   return visited, positionPath
 }
 
+/*
+This function creates a new world, based on the seed given to it
+*/
 func (world *World) New(sizex, sizey int, seed int64) {
   world.NewEx(sizex, sizey, seed, 20, 35)
 }
 
 /*
-This function creates a new world, based on the seed given to it
+This function creates a new world, based on the seed given to it, it takes more
+parameters, to set the probability of pits and a factor that gives difficulty by
+making more likely to the gold to be further away from the hunter
 */
 func (world *World) NewEx(sizex, sizey int, seed int64, pitFactor, unluckyFactor int) {
   if sizex == 0 || sizey == 0 {
