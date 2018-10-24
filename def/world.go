@@ -11,11 +11,11 @@ import (
 // pits cannot spawn (relative to letting a path to gold) and
 // the spawn of gold, hunter and wumpus will remove any pit
 // where they are spawned.
-const pitFactor = 20
+//const pitFactor = 20
 
 // The bigger this is, the more likely is to gold to spawn
 // further away from the hunter
-const unluckyFactor = 35
+//const unluckyFactor = 35
 
 const (
   Pit     = iota
@@ -123,7 +123,7 @@ where the gold shall be put.
 
 I'll divide this function in three parts, inside
 */
-func (world *World) guaranteePoints(positionHunter Point) (map[Point]bool, Point) {
+func (world *World) guaranteePoints(positionHunter Point, unluckyFactor int) (map[Point]bool, Point) {
   // Length calculated based on map size, it may be minor, but never
   // bigger
   length := int(2 * math.Sqrt(float64(world.sizex * world.sizex) + float64(world.sizey * world.sizey)))
@@ -205,10 +205,14 @@ func (world *World) guaranteePoints(positionHunter Point) (map[Point]bool, Point
   return visited, positionPath
 }
 
+func (world *World) New(sizex, sizey int, seed int64) {
+  world.NewEx(sizex, sizey, seed, 20, 35)
+}
+
 /*
 This function creates a new world, based on the seed given to it
 */
-func (world *World) New(sizex, sizey int, seed int64) {
+func (world *World) NewEx(sizex, sizey int, seed int64, pitFactor, unluckyFactor int) {
   if sizex == 0 || sizey == 0 {
     panic("Invalid dimensions!");
   }
@@ -219,7 +223,7 @@ func (world *World) New(sizex, sizey int, seed int64) {
   world.sizey = sizey
 
   // Guarantees a path from 0, 0, to point lastPoint, where the gold will be
-  guaranteedPoints, lastPoint := world.guaranteePoints(Point {0, 0}) // Hunter is always at 0, 0
+  guaranteedPoints, lastPoint := world.guaranteePoints(Point {0, 0}, unluckyFactor) // Hunter is always at 0, 0
 
   // Creates a map made from normal terrain and pit terrain
   // No pits on guaranteed points
@@ -253,43 +257,14 @@ func (world *World) New(sizex, sizey int, seed int64) {
   world.squares[wy][wx].hasWump = true
 }
 
+/* 
+ * This function creates a world from a string
+ */
 func (world *World) FromString(worldD string, lenX, lenY int) {
   world.squares = make([][]Square, lenY)
   world.sizey = lenY
   world.sizex = lenX
 
-  //lineSize := 0
-  //x, y := 0, 0
-  //for i := 0; i < len(worldD); i++ {
-  //  char := worldD[i]
-  //  //world.squares[y] = append(world.squares[y], Square{Normal, false, false, false})
-  //  //lineSize++
-  //  switch char {
-  //  case '\\':
-  //    //world.squares = append(world.squares, make([]Square, 0))
-  //    //world.sizex = lineSize
-  //    //lineSize = 0
-  //    y++
-  //    world.squares[y] = make([]Square, lenX)
-  //    x = -1
-  //    break
-  //  case 'W':
-  //    world.squares[y][x].hasWump = true
-  //    break
-  //  case 'i':
-  //    world.squares[y][x].hasHunter = true
-  //    break
-  //  case 'O':
-  //    world.squares[y][x].terrain = Pit
-  //    break
-  //  case '.':
-  //    world.squares[y][x].terrain = Normal
-  //    break
-  //  default:
-  //    break
-  //  }
-  //  x++
-  //}
   i := 0
   for y := 0; y < lenY; y++ {
     world.squares[y] = make([]Square, lenX)
