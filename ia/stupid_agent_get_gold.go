@@ -3,7 +3,7 @@ package ia
 import (
   "github.com/trindadegm/siwumpgo/def"
   //"math"
-  //"fmt"
+  "fmt"
   "container/list"
 )
 
@@ -72,6 +72,7 @@ func (agent *StupidCognitiveAgent) toGetGoldDecision() def.Action {
     return def.FACE_WEST
     break
   }
+  fmt.Println("toGetGoldDecision ERROR def.IDLE at END")
   return def.IDLE
 }
 

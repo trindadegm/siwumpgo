@@ -82,8 +82,9 @@ type StupidCognitiveAgent struct {
   model Model
   wantToMove bool
   wantToShoot bool
-  nextToExplore def.Point
+  //nextToExplore def.Point
   pathToUse *list.List
+  goalPoint def.Point
   moved bool
   objective Objective
 }
@@ -110,7 +111,8 @@ func (agent *StupidCognitiveAgent) New() {
   agent.wantToMove = false
   agent.wantToShoot = false
   agent.objective = GET_GOLD
-  agent.nextToExplore = def.Point {0, 0}
+  //agent.nextToExplore = def.Point {0, 0}
+  agent.goalPoint = def.Point {-1, -1}
   agent.pathToUse = list.New()
 }
 
@@ -319,6 +321,6 @@ func (agent *StupidCognitiveAgent) GetSintesisInfo() string {
     break
   }
 
-  return fmt.Sprintf("MODEL: {%d, %d} OBJECTIVE: %s ON {%d, %d}", len(agent.model.World[0]), len(agent.model.World),
-                      objDesc, objPosX, objPosY)
+  return fmt.Sprintf("MODEL: {%d, %d} OBJECTIVE: %s ON {%d, %d} WITH GOAL {%d, %d}", len(agent.model.World[0]),
+                      len(agent.model.World), objDesc, objPosX, objPosY, agent.goalPoint.PosX, agent.goalPoint.PosY)
 }
