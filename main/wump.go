@@ -2,6 +2,7 @@ package main
 
 import (
   "fmt"
+  "io"
   "github.com/trindadegm/siwumpgo/def"
   "github.com/trindadegm/siwumpgo/ia"
   "time"
@@ -77,15 +78,33 @@ func main() {
   //world.NewEx(14, 14, 1540378218, 10, 35)
   //world.New(14, 14, 1540341382)
 
+  var mode int
   var seed int64
-  var sizex, sizey, pf, uf int
-  fmt.Printf("WD: ")
-  fmt.Scanf("%d %d %d %d %d\n", &sizex, &sizey, &seed, &pf, &uf)
-  if seed == 0 {
-    seed = time.Now().Unix()
+  var sizex, sizey int
+  fmt.Printf("INPUT MODE: ")
+  fmt.Scanf("%d", &mode)
+  if mode == 0 {
+    var pf, uf int
+    fmt.Printf("WD: ")
+    fmt.Scanf("%d %d %d %d %d\n", &sizex, &sizey, &seed, &pf, &uf)
+    if seed == 0 {
+      seed = time.Now().Unix()
+    }
+    fmt.Printf("%d %d %d %d %d\n", sizex, sizey, seed, uf, pf)
+    world.NewEx(sizex, sizey, seed, pf, uf)
+  } else {
+    var swd, read string
+    fmt.Scanf("%d %d\n", &sizex, &sizey)
+    for {
+      _, err := fmt.Scanln(&read)
+      if err == io.EOF {
+        break
+      }
+      swd += read
+    }
+    fmt.Printf("%d %d %s", sizex, sizey, swd)
+    world.FromString(swd, sizex, sizey)
   }
-  fmt.Printf("%d %d %d %d %d\n", sizex, sizey, seed, uf, pf)
-  world.NewEx(sizex, sizey, seed, pf, uf)
 
   var sim def.Simulation
 
@@ -102,7 +121,7 @@ func main() {
 
     fmt.Println("SEED: ", seed)
     fmt.Println(sim, "\n", agent.GetSintesisInfo())
-    fmt.Print(agent)
+    //fmt.Print(agent)
     fmt.Println(facing)
     fmt.Println("smell", "breeze", "shine", "shock", "scream")
     fmt.Println(perception)

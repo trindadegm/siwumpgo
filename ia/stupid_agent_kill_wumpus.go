@@ -73,7 +73,7 @@ func (agent *StupidCognitiveAgent) toKillWumpusDecision() def.Action {
 }
 
 func (model *Model) getClosestSquareToShoot() def.Point {
-  fmt.Println("GETTING CLOSEST SQUARE TO SHOOT")
+  //fmt.Println("GETTING CLOSEST SQUARE TO SHOOT")
   minDist := math.MaxFloat64
   closest := def.Point {0, 0}
 
@@ -81,7 +81,7 @@ func (model *Model) getClosestSquareToShoot() def.Point {
     if model.World[model.WumpusPos.PosY][x].IsSafe == YES {
       dist := heuristicCostEstimate(model.HunterPos, def.Point {x, model.HunterPos.PosY})
       if dist <= minDist {
-        fmt.Printf("OPTION ON {%d, %d}, HEURISITC DIST IS %f\n", x, model.WumpusPos.PosY, dist)
+        //fmt.Printf("OPTION ON {%d, %d}, HEURISITC DIST IS %f\n", x, model.WumpusPos.PosY, dist)
         minDist = dist
         closest = def.Point {x, model.WumpusPos.PosY}
       }
@@ -92,7 +92,7 @@ func (model *Model) getClosestSquareToShoot() def.Point {
     if model.World[y][model.WumpusPos.PosX].IsSafe == YES {
       dist := heuristicCostEstimate(model.HunterPos, def.Point {model.HunterPos.PosX, y})
       if dist <= minDist {
-        fmt.Printf("OPTION ON {%d, %d}, HEURISITC DIST IS %f\n", model.WumpusPos.PosX, y, dist)
+        //fmt.Printf("OPTION ON {%d, %d}, HEURISITC DIST IS %f\n", model.WumpusPos.PosX, y, dist)
         minDist = dist
         closest = def.Point {model.WumpusPos.PosX, y}
       }

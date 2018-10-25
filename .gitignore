@@ -13,3 +13,5 @@
 
 # Editor hidden files
 *.swp
+
+*.ignore
