@@ -193,3 +193,28 @@ func (model *Model) shockOnBoundaryX() {
     model.noMorePitOn(def.Point {model.ExploredBoundaryX, y})
   }
 }
+
+func (model *Model) updateShoot(direction def.Direction) {
+  var diff def.Point
+  switch direction {
+  case def.NORTH:
+    diff = def.Point {0, -1}
+    break
+  case def.EAST:
+    diff = def.Point {1, 0}
+    break
+  case def.SOUTH:
+    diff = def.Point {0, 1}
+    break
+  case def.WEST:
+    diff = def.Point {-1, 0}
+    break
+  }
+
+  point := model.HunterPos
+  for def.IsInBounds(point, model.ExploredBoundaryX, model.ExploredBoundaryY) {
+    model.noMoreWumpusOn(point)
+    point.PosX += diff.PosX
+    point.PosY += diff.PosY
+  }
+}

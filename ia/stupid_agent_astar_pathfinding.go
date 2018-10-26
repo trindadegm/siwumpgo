@@ -68,7 +68,7 @@ func AStarPathfinding(start, goal def.Point, dimensionX, dimensionY int, world [
     }
   }
 
-  return nil
+  return list.New()
 }
 
 func initWithIntInfinity(vals map[def.Point]int, dimensionX, dimensionY int) {

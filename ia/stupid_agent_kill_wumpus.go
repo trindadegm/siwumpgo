@@ -14,9 +14,9 @@ func (agent *StupidCognitiveAgent) toKillWumpusDecision() def.Action {
     return def.IDLE
   }
 
-  if agent.model.HunterPos.PosX == agent.model.WumpusPos.PosX ||
-      agent.model.HunterPos.PosY == agent.model.WumpusPos.PosY {
-    direction := getDirection(agent.model.HunterPos, agent.model.WumpusPos)
+  if agent.model.HunterPos.PosX == agent.wumpusAim.PosX ||
+      agent.model.HunterPos.PosY == agent.wumpusAim.PosY {
+    direction := getDirection(agent.model.HunterPos, agent.wumpusAim)
     agent.wantToShoot = true
     switch direction {
     case def.NORTH:
@@ -35,9 +35,24 @@ func (agent *StupidCognitiveAgent) toKillWumpusDecision() def.Action {
   }
 
   if agent.pathToUse.Len() < 1 { // No path yet
-    if agent.model.WumpusPos.PosX != -1 { // There is a wumpus
-      goal := agent.model.getClosestSquareToShoot()
-      agent.goalPoint = goal
+    goal := def.Point {-1, -1}
+    if agent.model.WumpusPos.PosX != -1 { // There is a wumpus in a known position
+      agent.wumpusAim = agent.model.WumpusPos
+    } else { // Who knows where the wumpus is
+      list := agent.model.VisitedList
+      for it := list.Front(); it != nil; it = it.Next() {
+        point := it.Value.(def.Point)
+        wumpusPointerList := agent.model.World[point.PosY][point.PosX].WumpusPointer
+        if wumpusPointerList.Len() > 0 { // May have a wumpus
+          agent.wumpusAim = wumpusPointerList.Front().Value.(def.Point)
+        }
+      }
+    }
+    if agent.wumpusAim.PosX != -1 { // Has an idea
+      goal = agent.model.getClosestSquareToShoot(agent.wumpusAim)
+    }
+
+    if goal.PosX != -1 { // has somewhere to go and shoot
       world := agent.model.World
       path := AStarPathfinding(agent.model.HunterPos, goal, agent.model.ExploredBoundaryX, agent.model.ExploredBoundaryY, world)
 
@@ -72,29 +87,29 @@ func (agent *StupidCognitiveAgent) toKillWumpusDecision() def.Action {
   return def.IDLE
 }
 
-func (model *Model) getClosestSquareToShoot() def.Point {
+func (model *Model) getClosestSquareToShoot(target def.Point) def.Point {
   //fmt.Println("GETTING CLOSEST SQUARE TO SHOOT")
   minDist := math.MaxFloat64
   closest := def.Point {0, 0}
 
   for x := 0; x < model.ExploredBoundaryX; x++ {
-    if model.World[model.WumpusPos.PosY][x].IsSafe == YES {
+    if model.World[target.PosY][x].IsSafe == YES {
       dist := heuristicCostEstimate(model.HunterPos, def.Point {x, model.HunterPos.PosY})
       if dist <= minDist {
-        //fmt.Printf("OPTION ON {%d, %d}, HEURISITC DIST IS %f\n", x, model.WumpusPos.PosY, dist)
+        //fmt.Printf("OPTION ON {%d, %d}, HEURISITC DIST IS %f\n", x, target.PosY, dist)
         minDist = dist
-        closest = def.Point {x, model.WumpusPos.PosY}
+        closest = def.Point {x, target.PosY}
       }
     }
   }
 
   for y := 0; y < model.ExploredBoundaryY; y++ {
-    if model.World[y][model.WumpusPos.PosX].IsSafe == YES {
+    if model.World[y][target.PosX].IsSafe == YES {
       dist := heuristicCostEstimate(model.HunterPos, def.Point {model.HunterPos.PosX, y})
       if dist <= minDist {
-        //fmt.Printf("OPTION ON {%d, %d}, HEURISITC DIST IS %f\n", model.WumpusPos.PosX, y, dist)
+        //fmt.Printf("OPTION ON {%d, %d}, HEURISITC DIST IS %f\n", target.PosX, y, dist)
         minDist = dist
-        closest = def.Point {model.WumpusPos.PosX, y}
+        closest = def.Point {target.PosX, y}
       }
     }
   }

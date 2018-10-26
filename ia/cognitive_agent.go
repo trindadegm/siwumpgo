@@ -82,9 +82,8 @@ type StupidCognitiveAgent struct {
   model Model
   wantToMove bool
   wantToShoot bool
-  //nextToExplore def.Point
   pathToUse *list.List
-  goalPoint def.Point
+  wumpusAim def.Point
   moved bool
   objective Objective
 }
@@ -111,9 +110,8 @@ func (agent *StupidCognitiveAgent) New() {
   agent.wantToMove = false
   agent.wantToShoot = false
   agent.objective = GET_GOLD
-  //agent.nextToExplore = def.Point {0, 0}
-  agent.goalPoint = def.Point {-1, -1}
   agent.pathToUse = list.New()
+  agent.wumpusAim = def.Point {-1, -1}
 }
 
 func (agent *StupidCognitiveAgent) Decide(perception def.Perception, status def.Status, facing def.Direction) def.Action {
@@ -129,6 +127,8 @@ func (agent *StupidCognitiveAgent) Decide(perception def.Perception, status def.
 
   if agent.wantToShoot {
     agent.wantToShoot = false
+    agent.model.updateShoot(facing)
+    agent.objective = GET_GOLD
     return def.SHOOT
   } else if agent.wantToMove {
     agent.moved = true
@@ -321,6 +321,6 @@ func (agent *StupidCognitiveAgent) GetSintesisInfo() string {
     break
   }
 
-  return fmt.Sprintf("MODEL: {%d, %d} OBJECTIVE: %s ON {%d, %d} WITH GOAL {%d, %d}", len(agent.model.World[0]),
-                      len(agent.model.World), objDesc, objPosX, objPosY, agent.goalPoint.PosX, agent.goalPoint.PosY)
+  return fmt.Sprintf("MODEL: {%d, %d} OBJECTIVE: %s ON {%d, %d}", len(agent.model.World[0]),
+                      len(agent.model.World), objDesc, objPosX, objPosY)
 }
