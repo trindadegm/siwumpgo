@@ -6,17 +6,6 @@ import (
   "fmt"
 )
 
-// The bigger this is, the most likely it is for pits to spawn
-// There is a problem, however, because there are places where
-// pits cannot spawn (relative to letting a path to gold) and
-// the spawn of gold, hunter and wumpus will remove any pit
-// where they are spawned.
-//const pitFactor = 20
-
-// The bigger this is, the more likely is to gold to spawn
-// further away from the hunter
-//const unluckyFactor = 35
-
 const (
   Pit     = iota
   Normal  = iota
@@ -216,6 +205,15 @@ func (world *World) New(sizex, sizey int, seed int64) {
 This function creates a new world, based on the seed given to it, it takes more
 parameters, to set the probability of pits and a factor that gives difficulty by
 making more likely to the gold to be further away from the hunter
+
+pitFactor: the bigger this is, the most likely it is for pits to spawn
+There is a problem, however, because there are places where
+pits cannot spawn (relative to letting a path to gold) and
+the spawn of gold, hunter and wumpus will remove any pit
+where they are spawned.
+
+unluckyFactor: the bigger this is, the more likely is to gold to spawn
+further away from the hunter
 */
 func (world *World) NewEx(sizex, sizey int, seed int64, pitFactor, unluckyFactor int) {
   if sizex == 0 || sizey == 0 {

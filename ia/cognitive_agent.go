@@ -140,11 +140,9 @@ func (agent *StupidCognitiveAgent) Decide(perception def.Perception, status def.
     switch facing {
     case def.SOUTH:
       agent.model.shockOnBoundaryY()
-      //agent.model.ExploredBoundaryY--
       break
     case def.EAST:
       agent.model.shockOnBoundaryX()
-      //agent.model.ExploredBoundaryX--
     }
   } else if agent.moved { // If moved and didn't hit
     agent.model.moveAgent() // Update model positions and things like that
@@ -183,42 +181,45 @@ func (agent *StupidCognitiveAgent) Decide(perception def.Perception, status def.
   return def.IDLE
 }
 
+// Generates a string representing the agent's knowlege about the world as a map.
+// It is a very long and loop based method.
 func (agent StupidCognitiveAgent) String() string {
   var world [][]Cave
   var toReturn string
   world = agent.model.World
 
+  // Prints the size of the explored boundary, which is the size of the world on
+  // the agent's head.
   lenY := agent.model.ExploredBoundaryY
   lenX := agent.model.ExploredBoundaryX
   toReturn += fmt.Sprintf("%d %d\n    ", lenX, lenY)
+  // Prints the column numbers
   for x := 0; x < lenX; x++ {
     toReturn += fmt.Sprintf("%2d  ", x)
   }
   toReturn += "\n"
+  // For each line of squares
   for y := 0; y < lenY; y++ {
-    //for x := 0; x < lenX; x++ {
-    //  hunterPos := agent.model.HunterPos
-    //  if (hunterPos.PosX == x && hunterPos.PosY == y) {
-    //    toReturn += "i "
-    //  } else {
-    //    toReturn += world[y][x].String()
-    //  }
-    //}
+    // For each square on a line, prints the text representing some part of the state.
+    // This is a complicated thing to explain. I am doing three loops for each line
+    // here because each square is made out of NINE characters representing the knowledge
+    // of the state!
+    // The square is like this:
+    // ↑↑→    Which I know is crap. A squre is made out of nine characters like that
+    // ←i→    So each square is made out of three lines, so each for prints the three
+    // ←↓↓    top characters of each square. Deal with it.
     for x := 0; x < lenX; x++ {
       smellPtrUpChar := '.'
       if findPointOnList(world[y][x].WumpusPointer, def.Point {x, y-1}) != nil {
         smellPtrUpChar = '↑'
-        //smellPtrUpChar = rune(fmt.Sprintf("%d", world[y][x].WumpusPointer.Len())[0])
       }
       pitPtrUpChar := '.'
       if findPointOnList(world[y][x].PitPointer, def.Point {x, y-1}) != nil {
         pitPtrUpChar = '↑'
-        //pitPtrUpChar = rune(fmt.Sprintf("%d", world[y][x].PitPointer.Len())[0])
       }
       smellPtrRightChar := '.'
       if findPointOnList(world[y][x].WumpusPointer, def.Point {x+1, y}) != nil {
         smellPtrRightChar = '→'
-        //smellPtrRightChar = rune(fmt.Sprintf("%d", world[y][x].WumpusPointer.Len())[0])
       }
       if x == 0 {
         toReturn += "    "
@@ -242,12 +243,10 @@ func (agent StupidCognitiveAgent) String() string {
       pitPtrRightChar := '.'
       if findPointOnList(world[y][x].PitPointer, def.Point {x+1, y}) != nil {
         pitPtrRightChar = '→'
-        //pitPtrRightChar = rune(fmt.Sprintf("%d", world[y][x].PitPointer.Len())[0])
       }
       pitPtrLeftChar := '.'
       if findPointOnList(world[y][x].PitPointer, def.Point {x-1, y}) != nil {
         pitPtrLeftChar = '←'
-        //pitPtrLeftChar = rune(fmt.Sprintf("%d", world[y][x].PitPointer.Len())[0])
       }
       if x == 0 {
         toReturn += fmt.Sprintf(" %2d ", y)
@@ -259,17 +258,14 @@ func (agent StupidCognitiveAgent) String() string {
       smellPtrDownChar := '.'
       if findPointOnList(world[y][x].WumpusPointer, def.Point {x, y+1}) != nil {
         smellPtrDownChar = '↓'
-        //smellPtrDownChar = rune(fmt.Sprintf("%d", world[y][x].WumpusPointer.Len())[0])
       }
       pitPtrDownChar := '.'
       if findPointOnList(world[y][x].PitPointer, def.Point {x, y+1}) != nil {
         pitPtrDownChar = '↓'
-        //pitPtrDownChar = rune(fmt.Sprintf("%d", world[y][x].PitPointer.Len())[0])
       }
       smellPtrLeftChar := '.'
       if findPointOnList(world[y][x].WumpusPointer, def.Point {x-1, y}) != nil {
         smellPtrLeftChar = '←'
-        //smellPtrLeftChar = rune(fmt.Sprintf("%d", world[y][x].WumpusPointer.Len())[0])
       }
       if x == 0 {
         toReturn += "    "
@@ -302,6 +298,7 @@ func (cave Cave) String() string {
   }
 }
 
+// Returns simple information about the agent's state in a string
 func (agent *StupidCognitiveAgent) GetSintesisInfo() string {
   objPosX, objPosY := -1, -1
   if agent.pathToUse.Len() > 0 {
